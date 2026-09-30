@@ -1,0 +1,37 @@
+{
+  "name": "restaurant_ordering_system",
+  "version": "1.0.0",
+  "description": "Projeto da disciplina de Desenvolvimento Back-End, 4P - Engenharia de Software - Campus SJP",
+  "keywords": [
+    "back-end",
+    "ts",
+    "js",
+    "API",
+    "restautant",
+    "ordering",
+    "microservice"
+  ],
+  "license": "ISC",
+  "author": "Mateus R. Pereira",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "test": "npm run build && node --test test/*.test.mjs",
+    "dev": "node --watch --env-file=.env --import=tsx/esm src/server.ts",
+    "build": "tsc",
+    "start": "node --env-file=.env dist/server.js"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.115.0",
+    "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

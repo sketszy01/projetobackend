@@ -1,0 +1,508 @@
+{
+  "info": {
+    "name": "restaurant-ordering-system-API",
+    "description": "Execute em ordem em um banco de testes. IDs são capturados dos POSTs. Cria e remove apenas os registros criados nesta execução. Não contém credenciais.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "categoryId",
+      "value": ""
+    },
+    {
+      "key": "productId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Health da API",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/",
+        "description": "01 Health da API"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "02 Criar Category e guardar categoryId",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/categories",
+        "description": "02 Criar Category e guardar categoryId",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Pizzas\",\n  \"description\": \"Pizzas artesanais com diversos sabores.\",\n  \"icon\": \"🍕\",\n  \"display_order\": 1,\n  \"active\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);",
+              "if (pm.response.code === 201) pm.collectionVariables.set(\"categoryId\", pm.response.json().id);",
+              "pm.test(\"UUID retornado\", () => pm.expect(pm.response.json().id).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "03 Listar Categories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/categories",
+        "description": "03 Listar Categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "04 Consultar Category pelo ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/categories/{{categoryId}}",
+        "description": "04 Consultar Category pelo ID"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "05 Pesquisar Categories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/categories/search?keyword=Pizza",
+        "description": "05 Pesquisar Categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "06 Atualizar Category",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/categories/{{categoryId}}",
+        "description": "06 Atualizar Category",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Pizzas\",\n  \"description\": \"Pizzas tradicionais e especiais.\",\n  \"icon\": \"🍕\",\n  \"display_order\": 1,\n  \"active\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "07 Criar Product com Category existente",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/products",
+        "description": "07 Criar Product com Category existente",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categoryId\": \"{{categoryId}}\",\n  \"name\": \"Pizza Margherita\",\n  \"description\": \"Molho de tomate, muçarela e manjericão.\",\n  \"price\": 35.9,\n  \"image\": \"\",\n  \"available\": true,\n  \"active\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);",
+              "if (pm.response.code === 201) pm.collectionVariables.set(\"productId\", pm.response.json().id);",
+              "pm.test(\"UUID retornado\", () => pm.expect(pm.response.json().id).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i));",
+              "pm.test(\"FK corresponde à categoria criada\", () => pm.expect(pm.response.json().categoryId).to.eql(pm.collectionVariables.get(\"categoryId\")));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "08 Listar Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products",
+        "description": "08 Listar Products"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "09 Consultar Product pelo ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/{{productId}}",
+        "description": "09 Consultar Product pelo ID"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "10 Atualizar Product",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/products/{{productId}}",
+        "description": "10 Atualizar Product",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categoryId\": \"{{categoryId}}\",\n  \"name\": \"Pizza Margherita\",\n  \"description\": \"Molho de tomate, muçarela e manjericão.\",\n  \"price\": 39.9,\n  \"image\": \"\",\n  \"available\": true,\n  \"active\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "11 Categoria vinculada não pode ser excluída",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/categories/{{categoryId}}",
+        "description": "11 Categoria vinculada não pode ser excluída"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "12 Rejeitar preço inválido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/products",
+        "description": "12 Rejeitar preço inválido",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categoryId\": \"{{categoryId}}\",\n  \"name\": \"Pizza Margherita\",\n  \"description\": \"Molho de tomate, muçarela e manjericão.\",\n  \"price\": 0,\n  \"image\": \"\",\n  \"available\": true,\n  \"active\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "13 Rejeitar UUID inválido",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/invalido",
+        "description": "13 Rejeitar UUID inválido"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "14 Excluir Product",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/products/{{productId}}",
+        "description": "14 Excluir Product"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "15 Product excluído retorna 404",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/{{productId}}",
+        "description": "15 Product excluído retorna 404"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "16 Excluir Category",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/categories/{{categoryId}}",
+        "description": "16 Excluir Category"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "17 Category excluída retorna 404",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/categories/{{categoryId}}",
+        "description": "17 Category excluída retorna 404"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "18 Rejeitar Product com Category excluída",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/products",
+        "description": "18 Rejeitar Product com Category excluída",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categoryId\": \"{{categoryId}}\",\n  \"name\": \"Pizza Margherita\",\n  \"description\": \"Molho de tomate, muçarela e manjericão.\",\n  \"price\": 35.9,\n  \"image\": \"\",\n  \"available\": true,\n  \"active\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));",
+              "pm.test(\"Resposta JSON\", () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}
